@@ -1,4 +1,14 @@
 from Data.PMI import PMI_tensor
+from Factorizer.SSVI import SSVI_Embedding
 
-X = PMI_tensor()
-X.synthesize_fake_PMI(100, 3)
+num_word = 10
+order    = 3
+
+
+
+PMI = PMI_tensor()
+PMI.synthesize_fake_PMI(num_word, 3)
+# print(PMI.get_cooccurrence_list(0))
+
+factorizer = SSVI_Embedding(num_word, PMI)
+factorizer.factorize()

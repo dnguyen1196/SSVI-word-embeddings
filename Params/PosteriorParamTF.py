@@ -29,7 +29,7 @@ class VariationalPosteriorParamsTF(object):
         return matrices
 
     def get_vector_distribution(self, dim, i):
-        return self.params[dim][i, 0, :], self.params[dim][i, 1 :, :]
+        return self.params[dim][i, 0, :], self.params[dim][i, 1 : , :]
 
     def update_vector_distribution(self, dim, i, m, S):
         self.params[dim][i, :, :] = np.vstack((m, S))
