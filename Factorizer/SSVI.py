@@ -35,7 +35,7 @@ class SSVI_Embedding(object):
                 break
 
             if iteration % report == 0 and iteration != 0: # Report on convergence
-                print("Iter: ", iteration, " - deltas: ", np.around(delta_m,4), np.array(delta_c, 4))
+                print("Iter: ", iteration, " - deltas: ", np.around(delta_m,4), np.around(delta_c, 4))
 
             word_id = iteration % self.num_words
             observed_i = self.pmi_tensor.get_cooccurrence_list(word_id, self.batch_size)
