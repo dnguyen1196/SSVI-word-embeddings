@@ -28,16 +28,16 @@ class SSVI_Embedding(object):
         self.epsilon      = 0.001
 
     def produce_embeddings(self, filename, report=100, max_iters = 100001):
-        for iter in range(max_iters):
+        for iteration in range(max_iters):
             delta_m, delta_c = self.check_stopping_condition()
 
             if max(delta_m, delta_c) < self.epsilon:
                 break
 
-            if iter % report == 0 and iter != 0: # Report on convergence
-                print("Iter: ", iter, " - deltas: ", np.around(delta_m,4), np.array(delta_c, 4))
+            if iteration % report == 0 and iteration != 0: # Report on convergence
+                print("Iter: ", iteration, " - deltas: ", np.around(delta_m,4), np.array(delta_c, 4))
 
-            word_id = iter % self.num_words
+            word_id = iteration % self.num_words
             observed_i = self.pmi_tensor.get_cooccurrence_list(word_id, self.batch_size)
             m, S = self.variational_posterior.get_vector_distribution(self.ndim, word_id)
 
