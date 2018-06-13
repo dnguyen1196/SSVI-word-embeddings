@@ -5,8 +5,8 @@ from numpy.linalg import inv
 class SSVI_Embedding(object):
     def __init__(self, pmi_tensor, D=50):
         self.num_words   = pmi_tensor.num_words
-        self.D          = D
-        self.variational_posterior = VariationalPosteriorParamsTF([num_word], D)
+        self.D           = D
+        self.variational_posterior = VariationalPosteriorParamsTF([self.num_words], D)
 
         self.pmi_tensor = pmi_tensor
 
