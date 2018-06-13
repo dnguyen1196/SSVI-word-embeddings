@@ -12,20 +12,22 @@ class SSVI_Embedding(object):
 
         self.sigma = 1
         self.batch_size        = 100
-        self.word_vector_dim   = 0
+        self.ndim              = 0
         self.pSigma_inv        = np.eye(self.D,)
         self.pmu               = np.ones((self.D,))
 
         # Optimization variables
         self.eta = 1
         self.ada_grad = np.zeros((num_word, D))
-        self.max_iterations = 6000
+        self.max_iterations = 6001
+
+        self.time_step = np.ones((num_word,))
 
     def factorize(self):
         for iter in range(self.max_iterations):
             word_id = iter % self.num_word
             observed_i = self.pmi_tensor.get_cooccurrence_list(word_id, self.batch_size)
-            m, S = self.variational_posterior.get_vector_distribution(self.word_vector_dim, word_id)
+            m, S = self.variational_posterior.get_vector_distribution(self.ndim, word_id)
 
             di_acc = np.zeros((self.D,))
             Di_acc = np.zeros((self.D, self.D))
@@ -38,15 +40,23 @@ class SSVI_Embedding(object):
             Di_acc *= len(observed_i) / min(self.batch_size, len(observed_i))
             di_acc *= len(observed_i) / min(self.batch_size, len(observed_i))
 
-            covGrad = (self.pSigma_inv - 2 * Di_acc)
-            covStep = 0.01  #TODO: change this into a class constant or a function
-            S = inv((np.ones_like(covGrad) - covStep) * inv(S) + np.multiply(covStep, covGrad))
+            S_next = self.update_cov_param(word_id, m, S, Di_acc)
+            m_next = self.update_mean_param(word_id, m, S, di_acc)
 
-            meanGrad = (np.inner(self.pSigma_inv, self.pmu - m) + di_acc)
-            meanStep = self.compute_stepsize_mean_param(word_id, meanGrad)
-            m += np.multiply(meanStep, meanGrad)
+            self.variational_posterior.update_vector_distribution(self.ndim, word_id, m_next, S_next)
+            self.time_step[word_id] += 1
 
-            self.variational_posterior.update_vector_distribution(self.word_vector_dim, word_id, m, S)
+    def update_mean_param(self, word_id, m, S, di_acc):
+        meanGrad = (np.inner(self.pSigma_inv, self.pmu - m) + di_acc)
+        meanStep = self.compute_stepsize_mean_param(word_id, meanGrad)
+        m_next   = m + np.multiply(meanStep, meanGrad)
+        return m_next
+
+    def update_cov_param(self, word_id, m, S, Di_acc):
+        covGrad = (self.pSigma_inv - 2 * Di_acc)
+        covStep = 1/ (self.time_step[word_id] + 1) # simple decreasing step size
+        S_next = inv((np.ones_like(covGrad) - covStep) * inv(S) + np.multiply(covStep, covGrad))
+        return S_next
 
     def compute_stepsize_mean_param(self, id, mGrad):
         """
@@ -91,7 +101,7 @@ class SSVI_Embedding(object):
         s = self.sigma
 
         for word_id in other_word_ids:
-            m, S = self.variational_posterior.get_vector_distribution(self.word_vector_dim, word_id)
+            m, S = self.variational_posterior.get_vector_distribution(self.ndim, word_id)
 
             d_acc = np.multiply(d_acc, m)
             D_acc = np.multiply(D_acc, S + np.outer(m, m))

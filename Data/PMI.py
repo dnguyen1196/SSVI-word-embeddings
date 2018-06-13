@@ -5,8 +5,27 @@ import warnings
 
 class PMI_tensor():
     def __init__(self):
-
         return
+
+    def read_from_file(self, filename):
+        """
+
+        :param filename: filename containing the PMI pair
+        It must be the case that the file arranges the word
+        id in increasing order?
+        :return:
+        """
+        self.observations = []
+        id = -1
+        with open(filename, "r") as f:
+            f.readline() # header
+            for line in f:
+                data = line.rstrip().split(",")
+                id1, id2, pmi = int(data[0]), int(data[1]), float(data[2])
+                if id1 > id:
+                    self.observations.append([])
+                    id += 1
+                self.observations[id].append(([id1, id2], pmi))
 
     def synthesize_fake_PMI(self, num_words, order, D=50, sparsity=0.1):
         print("Generating synthetic PMI matrix ... ")
