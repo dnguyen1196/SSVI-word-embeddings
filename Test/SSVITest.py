@@ -8,4 +8,4 @@ PMI = PMI_tensor()
 PMI.synthesize_fake_PMI(num_word, 3)
 
 factorizer = SSVI_Embedding(num_word, PMI)
-factorizer.factorize()
+factorizer.produce_embeddings()

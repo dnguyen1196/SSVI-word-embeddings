@@ -36,5 +36,5 @@ class VariationalPosteriorParamsTF(object):
         self.tf_params[dim] = tf.assign(self.tf_params[dim], self.params[dim])
 
     def save_mean_params(self, dim, filename):
-
+        # TODO: check the format for downstream embedding evaluation
         return
