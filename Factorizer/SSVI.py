@@ -27,7 +27,7 @@ class SSVI_Embedding(object):
         self.norm_changes = np.ones((self.num_words, 2))
         self.epsilon      = 0.001
 
-    def produce_embeddings(self, filename, report=1000, max_iters = 100001):
+    def produce_embeddings(self, filename, report=100, max_iters = 100001):
         for iter in range(max_iters):
             delta_m, delta_c = self.check_stopping_condition()
 
@@ -92,7 +92,7 @@ class SSVI_Embedding(object):
     def keep_track_changes(self, id, m, S, m_next, S_next):
         delta_m = np.linalg.norm(m_next - m)
         delta_c = np.linalg.norm(S_next - S, "fro")
-        self.norm_changes[id, :] = [delta_m, delta_c]
+        self.norm_changes[id, :] = np.array([delta_m, delta_c])
 
     def check_stopping_condition(self):
         """
