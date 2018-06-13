@@ -37,4 +37,4 @@ class VariationalPosteriorParamsTF(object):
 
     def save_mean_params(self, dim, filename):
         # TODO: check the format for downstream embedding evaluation
-        return
+        np.savetxt(filename, self.params[dim][:, 0, :])
