@@ -7,28 +7,39 @@ class PMI_tensor():
     def __init__(self):
         return
 
-    def read_from_file(self, filename):
+    def read_from_csv_pmi(self, filename):
         """
-
-        :param filename: filename containing the PMI pair
+        :param filename: filename containing the pmi_tensor pair
         It must be the case that the file arranges the word
         id in increasing order?
+
+        The format of csv file must be
+        header: wordid, wordid, ..., pmi
+        Body: <id1, id2, ..., PMI>
+
         :return:
         """
         self.observations = []
         id = -1
+        self.num_words = 0
+
         with open(filename, "r") as f:
-            f.readline() # header
+            header = f.readline().rstrip().split(",") # header
+            self.order = len(header) - 1
             for line in f:
                 data = line.rstrip().split(",")
-                id1, id2, pmi = int(data[0]), int(data[1]), float(data[2])
-                if id1 > id:
+
+                idx  = [int(x) for x in data[:-1]]
+                pmi  = float(data[-1])
+
+                if idx[0] > id:
+                    self.num_words += 1
                     self.observations.append([])
                     id += 1
                 self.observations[id].append(([id1, id2], pmi))
 
     def synthesize_fake_PMI(self, num_words, order, D=50, sparsity=0.1):
-        print("Generating synthetic PMI matrix ... ")
+        print("Generating synthetic pmi_tensor matrix ... ")
         start = time.time()
 
         m = np.ones((D,))

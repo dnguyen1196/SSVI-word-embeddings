@@ -34,3 +34,7 @@ class VariationalPosteriorParamsTF(object):
     def update_vector_distribution(self, dim, i, m, S):
         self.params[dim][i, :, :] = np.vstack((m, S))
         self.tf_params[dim] = tf.assign(self.tf_params[dim], self.params[dim])
+
+    def save_mean_params(self, dim, filename):
+
+        return

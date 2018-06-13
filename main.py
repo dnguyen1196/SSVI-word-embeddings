@@ -1,10 +1,17 @@
 from Data.PMI import PMI_tensor
 from Factorizer.SSVI import SSVI_Embedding
+import sys
 import pickle
 
-num_word = 10
-order    = 3
+if __name__ == "__main__":
+    args = sys.argv[1:]
+    picked_file = args[0]
 
-with open("./pmi_cleaned.p", "rb") as f:
-    PMI = pickle.load(f, encoding="latin1")
-    print(PMI.get_cooccurrence_list(0))
+    with open(picked_file, "rb") as f:
+        pmi_tensor = pickle.load(f, encoding="latin1")
+        num_words  = pmi_tensor.num_words
+
+        factorizer = SSVI_Embedding(num_words, pmi_tensor)
+        factorizer.factorize()
+
+

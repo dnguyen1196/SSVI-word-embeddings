@@ -3,15 +3,15 @@ import numpy as np
 from numpy.linalg import inv
 
 class SSVI_Embedding(object):
-    def __init__(self, num_word, pmi_tensor, D=50):
-        self.num_word = num_word
-        self.D        = D
+    def __init__(self, pmi_tensor, D=50):
+        self.num_word   = pmi_tensor.num_words
+        self.D          = D
         self.variational_posterior = VariationalPosteriorParamsTF([num_word], D)
 
         self.pmi_tensor = pmi_tensor
 
         self.sigma = 1
-        self.batch_size        = 100
+        self.batch_size        = 128
         self.ndim              = 0
         self.pSigma_inv        = np.eye(self.D,)
         self.pmu               = np.ones((self.D,))
@@ -20,7 +20,6 @@ class SSVI_Embedding(object):
         self.eta = 1
         self.ada_grad = np.zeros((num_word, D))
         self.max_iterations = 6001
-
         self.time_step = np.ones((num_word,))
 
     def factorize(self):
@@ -75,10 +74,12 @@ class SSVI_Embedding(object):
 
     def stopping_condition(self):
         """
-        TODO: implement
         :return:
         """
         return False
+
+    def save_embeddings(self, filename):
+        self.variational_posterior.save_mean_params(self.ndim, filename)
 
     def estimate_di_Di(self, id, mi, Si, entry):
         """
