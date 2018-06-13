@@ -12,5 +12,5 @@ if __name__ == "__main__":
         pmi_tensor = pickle.load(f, encoding="latin1")
         num_words  = pmi_tensor.num_words
 
-        factorizer = SSVI_Embedding(num_words, pmi_tensor)
+        factorizer = SSVI_Embedding(pmi_tensor)
         factorizer.produce_embeddings(output)
