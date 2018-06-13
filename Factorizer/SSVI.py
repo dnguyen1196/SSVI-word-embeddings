@@ -18,11 +18,11 @@ class SSVI_Embedding(object):
 
         # Optimization variables
         self.eta = 1
-        self.ada_grad = np.zeros((num_word, D))
+        self.ada_grad = np.zeros((self.num_words, D))
         self.max_iterations = 6001
-        self.time_step = np.ones((num_word,))
+        self.time_step = np.ones((self.num_words,))
 
-        self.norm_changes = np.ones((num_word, 2))
+        self.norm_changes = np.ones((self.num_words, 2))
         self.epsilon      = 0.001
 
     def produce_embeddings(self, filename, report=1000, max_iters = 100001):
