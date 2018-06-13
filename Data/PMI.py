@@ -32,11 +32,12 @@ class PMI_tensor():
                 idx  = [int(x) for x in data[:-1]]
                 pmi  = float(data[-1])
 
-                if idx[0] > id:
+                if idx[0] > id: # Untracked word id
                     self.num_words += 1
                     self.observations.append([])
                     id += 1
-                self.observations[id].append(([id1, id2], pmi))
+
+                self.observations[id].append((idx, pmi))
 
     def synthesize_fake_PMI(self, num_words, order, D=50, sparsity=0.1):
         print("Generating synthetic pmi_tensor matrix ... ")
