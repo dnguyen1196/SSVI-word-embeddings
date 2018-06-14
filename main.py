@@ -18,7 +18,8 @@ def do_embeddings_pmi(pickedfile, output):
     with open(pickedfile, "rb") as f:
         pmi_tensor = pickle.load(f, encoding="latin1")
         num_words  = pmi_tensor.num_words
-        print("Factorizing ... ")
+        order      = pmi_tensor.order
+        print("Computing embeddings for ", num_words, " words from ", order, "th pmi tensor ... ")
         factorizer = SSVI_Embedding(pmi_tensor)
         factorizer.produce_embeddings(output)
 
