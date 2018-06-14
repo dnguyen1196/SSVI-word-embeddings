@@ -15,7 +15,7 @@ def do_synthetic_embeddings(num_words, order, output):
 
 def do_embeddings_pmi(pickedfile, output):
     print ("Loading tensor...")
-    with open(picked_file, "rb") as f:
+    with open(pickedfile, "rb") as f:
         pmi_tensor = pickle.load(f, encoding="latin1")
         num_words  = pmi_tensor.num_words
         print("Factorizing ... ")
