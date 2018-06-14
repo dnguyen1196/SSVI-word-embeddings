@@ -1,3 +1,8 @@
+# Make sure that synthetic data works
+- create a main program with synthetic option
+- 
+
+
 # Test on word embeddings data
 
 # Look into how to do evaluation

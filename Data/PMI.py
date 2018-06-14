@@ -40,6 +40,7 @@ class PMI_tensor():
                 self.observations[id].append((idx, pmi))
 
     def synthesize_fake_PMI(self, num_words, order, D=50, sparsity=0.1):
+        self.num_words = num_words
         print("Generating synthetic pmi_tensor matrix ... ")
         start = time.time()
 

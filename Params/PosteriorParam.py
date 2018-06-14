@@ -8,7 +8,6 @@ class ApproximatePosteriorParams(object):
         self.initCov  = initCov
 
         self.params = [[] for _ in self.dims]
-        # self.tf_params = [[] for _ in self.dims]
 
         if initMean is None or initCov is None:
             initMean = np.ones((self.D,))
@@ -34,4 +33,5 @@ class ApproximatePosteriorParams(object):
 
     def save_mean_params(self, dim, filename):
         # TODO: check the format for downstream embedding evaluation
-        np.savetxt(filename, self.params[dim][:, 0, :])
+        print("Saving to file ", filename, " ...")
+        np.savetxt(filename, self.params[dim][:, 0, :], delimiter=",")

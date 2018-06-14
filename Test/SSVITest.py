@@ -1,11 +1,12 @@
 from Data.PMI import PMI_tensor
 from Factorizer.SSVI import SSVI_Embedding
 
-num_word = 10
+num_words = 10
 order    = 3
 
 PMI = PMI_tensor()
-PMI.synthesize_fake_PMI(num_word, 3)
+PMI.synthesize_fake_PMI(num_words, 3)
+filename = "random.txt"
 
-factorizer = SSVI_Embedding(num_word, PMI)
-factorizer.produce_embeddings()
+factorizer = SSVI_Embedding(PMI)
+factorizer.produce_embeddings(filename, report=100)
