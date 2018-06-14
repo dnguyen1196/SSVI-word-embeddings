@@ -13,7 +13,7 @@ class SSVI_Embedding(object):
         self.pmi_tensor = pmi_tensor
 
         self.sigma = 1
-        self.batch_size        = 128
+        self.batch_size        = 1000
         self.ndim              = 0
         self.pSigma_inv        = np.eye(self.D,)
         self.pmu               = np.ones((self.D,))
