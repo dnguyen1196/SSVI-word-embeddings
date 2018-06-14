@@ -28,7 +28,7 @@ class SSVI_Embedding(object):
         self.norm_changes = np.zeros((self.num_words, 2))
         self.epsilon      = 0.001
 
-    def produce_embeddings(self, filename, report=1, num_epochs = 1000):
+    def produce_embeddings(self, filename, report=1, num_epochs = 500):
         self.report = report
 
         for epoch in range(num_epochs):
