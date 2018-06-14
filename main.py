@@ -11,7 +11,7 @@ def do_synthetic_embeddings(num_words, order, output):
     PMI.synthesize_fake_PMI(num_words, order)
 
     factorizer = SSVI_Embedding(PMI)
-    factorizer.produce_embeddings(output, report=100)
+    factorizer.produce_embeddings(output)
 
 def do_embeddings_pmi(pickedfile, output):
     print ("Loading tensor...")
@@ -22,7 +22,6 @@ def do_embeddings_pmi(pickedfile, output):
         print("Computing embeddings for ", num_words, " words from ", order, "th pmi tensor ... ")
         factorizer = SSVI_Embedding(pmi_tensor)
         factorizer.produce_embeddings(output)
-
 
 parser = argparse.ArgumentParser(description='SSVI word embeddings')
 

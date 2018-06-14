@@ -22,45 +22,42 @@ class SSVI_Embedding(object):
         self.eta = 1
         self.ada_grad = np.zeros((self.num_words, D))
         self.max_iterations = 6001
-        self.time_step = np.ones((self.num_words,))
+        # self.time_step = np.ones((self.num_words,))
+        self.time_step   = 1
 
         self.norm_changes = np.zeros((self.num_words, 2))
         self.epsilon      = 0.001
 
-    def produce_embeddings(self, filename, report=100, max_iters = 100001):
+    def produce_embeddings(self, filename, report=1, num_epochs = 1000):
         self.report = report
 
-        for iteration in range(max_iters):
-            word_id = iteration % self.num_words
-            observed_i = self.pmi_tensor.get_cooccurrence_list(word_id, self.batch_size)
-            m, S = self.variational_posterior.get_vector_distribution(self.ndim, word_id)
+        for epoch in range(num_epochs):
+            for word_id in range(self.num_words):
+                observed_i = self.pmi_tensor.get_cooccurrence_list(word_id, self.batch_size)
+                m, S = self.variational_posterior.get_vector_distribution(self.ndim, word_id)
 
-            di_acc = np.zeros((self.D,))
-            Di_acc = np.zeros((self.D, self.D))
+                di_acc = np.zeros((self.D,))
+                Di_acc = np.zeros((self.D, self.D))
 
-            for entry in observed_i:
-                di, Di = self.estimate_di_Di(word_id, m, S, entry)
-                di_acc += di
-                Di_acc += Di
+                for entry in observed_i:
+                    di, Di = self.estimate_di_Di(word_id, m, S, entry)
+                    di_acc += di
+                    Di_acc += Di
 
-            Di_acc *= len(observed_i) / min(self.batch_size, len(observed_i))
-            di_acc *= len(observed_i) / min(self.batch_size, len(observed_i))
+                Di_acc *= len(observed_i) / min(self.batch_size, len(observed_i))
+                di_acc *= len(observed_i) / min(self.batch_size, len(observed_i))
 
-            S_next = self.update_cov_param(word_id, m, S, Di_acc)
-            m_next = self.update_mean_param(word_id, m, S, di_acc)
-            # print(m_next - m)
-            # print(np.linalg.norm(m_next - m))
+                S_next = self.update_cov_param(word_id, m, S, Di_acc)
+                m_next = self.update_mean_param(word_id, m, S, di_acc)
 
-            self.keep_track_changes(word_id, m, S, m_next, S_next)
-            self.time_step[word_id] += 1
-            self.variational_posterior.update_vector_distribution(self.ndim, word_id, m_next, S_next)
+                self.keep_track_changes(word_id, m, S, m_next, S_next)
+                self.variational_posterior.update_vector_distribution(self.ndim, word_id, m_next, S_next)
 
+            self.time_step += 1
             delta_m, delta_c = self.check_stopping_condition()
+            self.report_convergence(epoch, delta_m, delta_c)
             if max(delta_m, delta_c) < self.epsilon:  # Stopping criterion
                 break
-
-            if iteration % self.report == 0 and iteration > 0:  # Report on convergence
-                self.report_convergence(iteration, delta_m, delta_c)
 
         # After the loop, save the embeddings
         self.save_embeddings(filename)
@@ -73,7 +70,7 @@ class SSVI_Embedding(object):
 
     def update_cov_param(self, word_id, m, S, Di_acc):
         covGrad = (self.pSigma_inv - 2 * Di_acc)
-        covStep = 1/ (self.time_step[word_id] + 1) # simple decreasing step size
+        covStep = 1/ (self.time_step + 1) # simple decreasing step size
         S_next = inv((np.ones_like(covGrad) - covStep) * inv(S) + np.multiply(covStep, covGrad))
         return S_next
 
@@ -112,10 +109,10 @@ class SSVI_Embedding(object):
 
         return max_delta_m, max_delta_c
 
-    def report_convergence(self, iteration, delta_m, delta_c):
-        if iteration == self.report:
-            print("Iteration | delta_m  | delta_c  ")
-        print('{:^10} {:^10} {:^10}'.format(iteration, np.around(delta_m, 4), np.around(delta_c, 4)))
+    def report_convergence(self, epoch, delta_m, delta_c):
+        if epoch == 0:
+            print("   epoch  | delta_m  | delta_c  ")
+        print('{:^10} {:^10} {:^10}'.format(epoch, np.around(delta_m, 4), np.around(delta_c, 4)))
 
     def save_embeddings(self, filename):
         self.variational_posterior.save_mean_params(self.ndim, filename)

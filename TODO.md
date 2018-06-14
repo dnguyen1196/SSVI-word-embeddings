@@ -1,9 +1,9 @@
 # Make sure that synthetic data works
 - create a main program with synthetic option
-- 
-
+- Report after every round instead of every 100 iterations
 
 # Test on word embeddings data
+
 
 # Look into how to do evaluation
 - Built in gensim tools that just needs a text filecontaining the words vectors
