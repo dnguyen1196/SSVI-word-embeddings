@@ -58,9 +58,8 @@ class SSVI_Embedding(object):
             self.report_convergence(epoch, delta_m, delta_c)
             if max(delta_m, delta_c) < self.epsilon:  # Stopping criterion
                 break
-
-        # After the loop, save the embeddings
-        self.save_embeddings(filename)
+            # After each epoch, save the embeddings
+            self.save_embeddings(filename + "_" + str(epoch) + ".txt")
 
     def update_mean_param(self, word_id, m, S, di_acc):
         meanGrad = (np.inner(self.pSigma_inv, self.pmu - m) + di_acc)
