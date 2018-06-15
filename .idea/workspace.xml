@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c28a02f6-73d9-41dc-aebf-3440de3c4163" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Factorizer/SSVI.py" afterPath="$PROJECT_DIR$/Factorizer/SSVI.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Params/PosteriorParam.py" afterPath="$PROJECT_DIR$/Params/PosteriorParam.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -41,11 +41,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SSVI.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="SSVI.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Factorizer/SSVI.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
-              <caret line="61" column="70" lean-forward="true" selection-start-line="61" selection-start-column="70" selection-end-line="61" selection-end-column="70" />
+            <state relative-caret-position="141">
+              <caret line="116" column="51" lean-forward="false" selection-start-line="116" selection-start-column="35" selection-end-line="116" selection-end-column="51" />
               <folding>
                 <element signature="e#0#64#0" expanded="true" />
               </folding>
@@ -53,11 +53,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PosteriorParam.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="PosteriorParam.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Params/PosteriorParam.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="612">
-              <caret line="36" column="62" lean-forward="false" selection-start-line="36" selection-start-column="62" selection-end-line="36" selection-end-column="62" />
+            <state relative-caret-position="271">
+              <caret line="34" column="0" lean-forward="false" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -128,10 +128,10 @@
         <option value="$PROJECT_DIR$/Params/PosteriorParamTF.py" />
         <option value="$PROJECT_DIR$/Data/PMI.py" />
         <option value="$PROJECT_DIR$/Test/SSVITest.py" />
-        <option value="$PROJECT_DIR$/Params/PosteriorParam.py" />
         <option value="$PROJECT_DIR$/TODO.md" />
         <option value="$PROJECT_DIR$/main.py" />
         <option value="$PROJECT_DIR$/Factorizer/SSVI.py" />
+        <option value="$PROJECT_DIR$/Params/PosteriorParam.py" />
       </list>
     </option>
   </component>
@@ -574,14 +574,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Params/PosteriorParam.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="612">
-          <caret line="36" column="62" lean-forward="false" selection-start-line="36" selection-start-column="62" selection-end-line="36" selection-end-column="62" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="238">
@@ -604,11 +596,19 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Factorizer/SSVI.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="61" column="70" lean-forward="true" selection-start-line="61" selection-start-column="70" selection-end-line="61" selection-end-column="70" />
+        <state relative-caret-position="141">
+          <caret line="116" column="51" lean-forward="false" selection-start-line="116" selection-start-column="35" selection-end-line="116" selection-end-column="51" />
           <folding>
             <element signature="e#0#64#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Params/PosteriorParam.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="271">
+          <caret line="34" column="0" lean-forward="false" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>

@@ -32,6 +32,4 @@ class ApproximatePosteriorParams(object):
         self.params[dim][i, :, :] = np.vstack((m, S))
 
     def save_mean_params(self, dim, filename):
-        # TODO: check the format for downstream embedding evaluation
-        print("Saving to file ", filename, " ...")
         np.savetxt(filename, self.params[dim][:, 0, :], delimiter=",")
