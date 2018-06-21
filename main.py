@@ -7,12 +7,12 @@ import argparse
 
 
 def do_synthetic_embeddings(num_words, order, output, diag):
-    PMI = PMI_tensor()
-    PMI.synthesize_fake_PMI(num_words, order)
+    pmi_tensor = PMI_tensor()
+    pmi_tensor.synthesize_fake_PMI(num_words, order)
     if diag:
-        factorizer = SSVI_Embedding_Diag(PMI)
+        factorizer = SSVI_Embedding_Diag(pmi_tensor)
     else:
-        factorizer = SSVI_Embedding_full(PMI)
+        factorizer = SSVI_Embedding_full(pmi_tensor)
     factorizer.produce_embeddings(output)
 
 def do_embeddings_pmi(pickedfile, output, diag):
@@ -23,9 +23,9 @@ def do_embeddings_pmi(pickedfile, output, diag):
         order      = pmi_tensor.order
         print("Computing embeddings for ", num_words, " words from ", order, "th pmi tensor ... ")
         if diag:
-            factorizer = SSVI_Embedding_Diag(PMI)
+            factorizer = SSVI_Embedding_Diag(pmi_tensor)
         else:
-            factorizer = SSVI_Embedding_full(PMI)
+            factorizer = SSVI_Embedding_full(pmi_tensor)
         factorizer.produce_embeddings(output)
 
 parser = argparse.ArgumentParser(description='SSVI word embeddings')
