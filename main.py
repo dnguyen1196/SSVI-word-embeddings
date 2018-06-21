@@ -1,5 +1,5 @@
 from Data.PMI import PMI_tensor
-from Factorizer.SSVI import SSVI_Embedding
+from Factorizer.SSVI import SSVI_Embedding_full
 import sys
 import pickle
 import argparse
@@ -10,7 +10,7 @@ def do_synthetic_embeddings(num_words, order, output):
     PMI = PMI_tensor()
     PMI.synthesize_fake_PMI(num_words, order)
 
-    factorizer = SSVI_Embedding(PMI)
+    factorizer = SSVI_Embedding_full(PMI)
     factorizer.produce_embeddings(output)
 
 def do_embeddings_pmi(pickedfile, output):
@@ -20,7 +20,7 @@ def do_embeddings_pmi(pickedfile, output):
         num_words  = pmi_tensor.num_words
         order      = pmi_tensor.order
         print("Computing embeddings for ", num_words, " words from ", order, "th pmi tensor ... ")
-        factorizer = SSVI_Embedding(pmi_tensor)
+        factorizer = SSVI_Embedding_full(pmi_tensor)
         factorizer.produce_embeddings(output)
 
 parser = argparse.ArgumentParser(description='SSVI word embeddings')

@@ -1,5 +1,5 @@
 from Data.PMI import PMI_tensor
-from Factorizer.SSVI import SSVI_Embedding
+from Factorizer.SSVI import SSVI_Embedding_full
 import pickle
 
 num_word = 10
