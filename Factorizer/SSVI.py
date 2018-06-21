@@ -56,9 +56,9 @@ class SSVI_Embedding_full(SSVI_interface):
         return di, Di
 
 
-class SSVI_embedding_diag(SSVI_interface):
+class SSVI_Embedding_Diag(SSVI_interface):
     def __init__(self, pmi_tensor, D=50):
-        super(SSVI_Embedding_full, self).__init__(pmi_tensor, D)
+        super(SSVI_Embedding_Diag, self).__init__(pmi_tensor, D)
 
         self.variational_posterior = PosteriorDiagonalCovariance([self.num_words], D)
 
@@ -74,7 +74,7 @@ class SSVI_embedding_diag(SSVI_interface):
     def update_cov_param(self, word_id, m, S, Di_acc):
         covGrad = (self.pSigma_inv - 2 * Di_acc)
         covStep = 1 / (self.time_step + 1)  # simple decreasing step size
-        S_next = inv((np.ones_like(covGrad) - covStep) * inv(S) + np.multiply(covStep, covGrad))
+        S_next = np.reciprocal((np.ones_like(covGrad) - covStep) * np.reciprocal(S) + np.multiply(covStep, covGrad))
         return S_next
 
     def estimate_di_Di(self, id, mi, Si, entry):

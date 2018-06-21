@@ -1,6 +1,6 @@
 from Params.PosteriorParam import PosteriorFullCovariance
 from abc import abstractclassmethod, abstractmethod
-
+import time
 import numpy as np
 from numpy.linalg import inv
 
@@ -26,8 +26,9 @@ class SSVI_interface(object):
         self.norm_changes      = np.zeros((self.num_words, 2))
         self.epsilon           = 0.001
 
-    def produce_embeddings(self, filename, report=1, num_epochs = 500):
+    def produce_embeddings(self, filename=None, report=1, num_epochs = 500):
         self.report = report
+        start = time.time()
 
         for epoch in range(num_epochs):
             for word_id in range(self.num_words):
@@ -52,11 +53,12 @@ class SSVI_interface(object):
 
             self.time_step += 1
             delta_m, delta_c = self.check_stopping_condition()
-            self.report_convergence(epoch, delta_m, delta_c)
+            self.report_convergence(epoch, delta_m, delta_c, start)
             if max(delta_m, delta_c) < self.epsilon:  # Stopping criterion
                 break
             # After each epoch, save the embeddings
-            self.save_embeddings(filename + "_" + str(epoch) + ".txt")
+            if filename is not None:
+                self.save_embeddings(filename + "_" + str(epoch) + ".txt")
 
     @abstractmethod
     def init_di_Di(self):
@@ -91,7 +93,10 @@ class SSVI_interface(object):
 
     def keep_track_changes(self, id, m, S, m_next, S_next):
         delta_m = np.linalg.norm(m_next - m)
-        delta_c = np.linalg.norm(S_next - S, "fro")
+        if S.ndim == 1:
+            delta_c = np.linalg.norm(S_next - S)
+        else:
+            delta_c = np.linalg.norm(S_next - S, "fro")
         self.norm_changes[id, :] = np.array([delta_m, delta_c])
 
     def check_stopping_condition(self):
@@ -107,10 +112,12 @@ class SSVI_interface(object):
 
         return max_delta_m, max_delta_c
 
-    def report_convergence(self, epoch, delta_m, delta_c):
+    def report_convergence(self, epoch, delta_m, delta_c, start):
         if epoch == 0:
-            print("   epoch  | delta_m  | delta_c  ")
-        print('{:^10} {:^10} {:^10}'.format(epoch, np.around(delta_m, 4), np.around(delta_c, 4)))
+            print("   epoch  | delta_m  | delta_c  | time ")
+        print('{:^10} {:^10} {:^10}'.format(epoch, np.around(delta_m, 4), \
+                                            np.around(delta_c, 4)),\
+                                            np.around(time.time() - start, 2))
 
     def save_embeddings(self, filename):
         self.variational_posterior.save_mean_params(self.ndim, filename)
