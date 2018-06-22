@@ -18,13 +18,13 @@ class SSVI_interface(object):
         self.pmu               = np.ones((self.D,))
 
         # Optimization variables
-        self.eta               = 1
+        self.grad_eta          = 0.01
         self.ada_grad          = np.zeros((self.num_words, D))
         self.max_iterations    = 6001
         self.time_step         = 1
 
-        self.norm_changes      = np.zeros((self.num_words, 2))
-        self.epsilon           = 0.001
+        self.norm_changes      = np.zeros((self.num_words, 3))
+        self.epsilon           = 0.01
 
     def produce_embeddings(self, filename=None, report=1, num_epochs = 500):
         self.report = report
@@ -52,13 +52,16 @@ class SSVI_interface(object):
                 self.variational_posterior.update_vector_distribution(self.ndim, word_id, m_next, S_next)
 
             self.time_step += 1
-            delta_m, delta_c = self.check_stopping_condition()
-            self.report_convergence(epoch, delta_m, delta_c, start)
-            if max(delta_m, delta_c) < self.epsilon:  # Stopping criterion
-                break
+            delta_m_nat, delta_m, delta_c = self.check_stopping_condition()
+
+            self.report_convergence(epoch, delta_m_nat, delta_m, delta_c, start)
             # After each epoch, save the embeddings
             if filename is not None:
                 self.save_embeddings(filename + "_" + str(epoch) + ".txt")
+
+            if self.satisfy_stopping_condition(delta_m_nat, delta_m, delta_c):
+                # Stopping criterion
+                break
 
     @abstractmethod
     def init_di_Di(self):
@@ -89,15 +92,18 @@ class SSVI_interface(object):
         acc_grad = self.ada_grad[id, :]
         grad_sqr = np.square(mGrad)
         self.ada_grad[id, :] += grad_sqr
-        return np.divide(self.eta, np.sqrt(np.add(acc_grad, grad_sqr)))
+        return np.divide(self.grad_eta, np.sqrt(np.add(acc_grad, grad_sqr)))
 
     def keep_track_changes(self, id, m, S, m_next, S_next):
-        delta_m = np.linalg.norm(m_next - m)
+        # Changes in the natural space
+        delta_m_nat = np.linalg.norm(np.inner(S_next, m_next) - np.inner(S, m))
+        # Changes in the standard space
+        delta_m     = np.linalg.norm(m_next - m)
         if S.ndim == 1:
             delta_c = np.linalg.norm(S_next - S)
         else:
             delta_c = np.linalg.norm(S_next - S, "fro")
-        self.norm_changes[id, :] = np.array([delta_m, delta_c])
+        self.norm_changes[id, :] = np.array([delta_m_nat, delta_m, delta_c])
 
     def check_stopping_condition(self):
         """
@@ -105,19 +111,25 @@ class SSVI_interface(object):
         """
         max_delta_m = 0.
         max_delta_c = 0.
+        max_delta_nat = 0.
         for id in range(self.num_words):
-            delta_m, delta_c = self.norm_changes[id, :]
+            delta_nat, delta_m, delta_c = self.norm_changes[id, :]
             max_delta_m = max(delta_m, max_delta_m)
             max_delta_c = max(delta_c, max_delta_c)
+            max_delta_nat = max(delta_nat, max_delta_nat)
 
-        return max_delta_m, max_delta_c
+        return max_delta_nat, max_delta_m, max_delta_c
 
-    def report_convergence(self, epoch, delta_m, delta_c, start):
+    def report_convergence(self, epoch, delta_m_nat, delta_m, delta_c, start):
         if epoch == 0:
-            print("   epoch  | delta_m  | delta_c  | time ")
-        print('{:^10} {:^10} {:^10}'.format(epoch, np.around(delta_m, 4), \
+            print("   epoch  | delta_nat| delta_m  | delta_c  | time ")
+        print('{:^10} {:^10} {:^10} {:^10}'.format(epoch, np.around(delta_m, 4), \
+                                            np.around(delta_m_nat, 4),\
                                             np.around(delta_c, 4)),\
                                             np.around(time.time() - start, 2))
 
     def save_embeddings(self, filename):
         self.variational_posterior.save_mean_params(self.ndim, filename)
+
+    def satisfy_stopping_condition(self, delta_m_nat, delta_m, delta_c):
+        return max(delta_m_nat, delta_m) < self.epsilon

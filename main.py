@@ -1,6 +1,6 @@
 from Data.PMI import PMI_tensor
-from Factorizer.SSVI import SSVI_Embedding_full
-from Factorizer.SSVI import SSVI_Embedding_Diag
+from Factorizer.SSVI_full import SSVI_Embedding_full
+from Factorizer.SSVI_diag import SSVI_Embedding_Diag
 import sys
 import pickle
 import argparse
