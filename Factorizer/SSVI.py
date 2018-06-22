@@ -10,6 +10,7 @@ class SSVI_Embedding_full(SSVI_interface):
         super(SSVI_Embedding_full, self).__init__(pmi_tensor, D)
 
         self.variational_posterior = PosteriorFullCovariance([self.num_words], D)
+        self.time_step         = 1
 
     def init_di_Di(self):
         return np.ones((self.D,)), np.ones((self.D,self.D))
@@ -60,6 +61,7 @@ class SSVI_Embedding_Diag(SSVI_interface):
     def __init__(self, pmi_tensor, D=50):
         super(SSVI_Embedding_Diag, self).__init__(pmi_tensor, D)
 
+        self.ada_cov = np.zeros((self.num_words, D))
         self.variational_posterior = PosteriorDiagonalCovariance([self.num_words], D)
 
     def init_di_Di(self):
@@ -73,9 +75,15 @@ class SSVI_Embedding_Diag(SSVI_interface):
 
     def update_cov_param(self, word_id, m, S, Di_acc):
         covGrad = (self.pSigma_inv - 2 * Di_acc)
-        covStep = 1 / (self.time_step + 1)  # simple decreasing step size
+        covStep = self.compute_stepsize_cov_param(word_id, covGrad)
         S_next = np.reciprocal((np.ones_like(covGrad) - covStep) * np.reciprocal(S) + np.multiply(covStep, covGrad))
         return S_next
+
+    def compute_stepsize_cov_param(self, id, cGrad):
+        acc_grad = self.ada_cov[id, :]
+        grad_sqr = np.square(mGrad)
+        self.ada_cov[id, :] = np.add(acc_grad, grad_sqr)
+        return np.divide(self.eta, np.sqrt(np.add(acc_grad, grad_sqr)))
 
     def estimate_di_Di(self, id, mi, Si, entry):
         """

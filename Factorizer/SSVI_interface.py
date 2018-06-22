@@ -21,7 +21,6 @@ class SSVI_interface(object):
         self.eta               = 1
         self.ada_grad          = np.zeros((self.num_words, D))
         self.max_iterations    = 6001
-        self.time_step         = 1
 
         self.norm_changes      = np.zeros((self.num_words, 2))
         self.epsilon           = 0.001
