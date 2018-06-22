@@ -10,7 +10,6 @@ class SSVI_Embedding_full(SSVI_interface):
         super(SSVI_Embedding_full, self).__init__(pmi_tensor, D)
 
         self.variational_posterior = PosteriorFullCovariance([self.num_words], D)
-        self.time_step         = 1
 
     def init_di_Di(self):
         return np.ones((self.D,)), np.ones((self.D,self.D))
