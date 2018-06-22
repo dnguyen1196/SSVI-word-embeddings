@@ -81,7 +81,7 @@ class SSVI_Embedding_Diag(SSVI_interface):
 
     def compute_stepsize_cov_param(self, id, cGrad):
         acc_grad = self.ada_cov[id, :]
-        grad_sqr = np.square(mGrad)
+        grad_sqr = np.square(cGrad)
         self.ada_cov[id, :] = np.add(acc_grad, grad_sqr)
         return np.divide(self.eta, np.sqrt(np.add(acc_grad, grad_sqr)))
 
