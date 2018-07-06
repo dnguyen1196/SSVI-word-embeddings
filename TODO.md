@@ -1,7 +1,6 @@
 # 
 - Close form update for the diagonal case
-- Implement that and then re run
-
+- Batch processing
 
 
 # Test on word embeddings data
