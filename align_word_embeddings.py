@@ -24,9 +24,9 @@ with open(pickle_file, "rb") as f:
     aligner = pickle.load(f, encoding="latin1")
     word_id = 0
     for line in embeddings:
-        word_embedding = line.rstrip()
+        word_embedding = line.rstrip().split(",")
         actual_word    = aligner[word_id]
-        output.write(actual_word + " " + word_embedding)
+        output.write(actual_word + " " + ' '.join(word_embedding))
         output.write("\n")
         word_id += 1
 
