@@ -13,9 +13,9 @@ parser.add_argument("-o", "--output", type=str, help="Output embedding file")
 
 args = parser.parse_args()
 
-pickle_file = parser.pickle
-embedding_file = parser.embed
-output_file = parser.output
+pickle_file = args.pickle
+embedding_file = args.embed
+output_file = args.output
 
 embeddings = open(embedding_file, "r")
 output     = open(output_file, "w")
@@ -27,6 +27,10 @@ with open(pickle_file, "rb") as f:
         word_embedding = line.rstrip()
         actual_word    = aligner[word_id]
         output.write(actual_word + " " + word_embedding)
+        output.write("\n")
         word_id += 1
 
 
+# python align_word_embeddings.py -e /home/mnguye16/SSVI/SSVI-word-embeddings/embeddings_results/embeddings_2016_126.txt
+# -p /home/mnguye16/PMI_2016/wordPairPMI_2016wordIDs.pickle
+# -o /aligned_embeddings/2016_embeddings_full.txt
