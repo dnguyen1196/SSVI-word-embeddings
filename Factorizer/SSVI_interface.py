@@ -35,12 +35,6 @@ class SSVI_interface(object):
                 observed_i = self.pmi_tensor.get_cooccurrence_list(word_id, self.batch_size)
                 m, S = self.variational_posterior.get_vector_distribution(self.ndim, word_id)
 
-                # di_acc, Di_acc = self.init_di_Di()
-                #
-                # for entry in observed_i:
-                #     di, Di = self.estimate_di_Di(word_id, m, S, entry)
-                #     di_acc += di
-                #     Di_acc += Di
                 ys = [entry[1] for entry in observed_i]
                 coords = [entry[0] for entry in observed_i]
 

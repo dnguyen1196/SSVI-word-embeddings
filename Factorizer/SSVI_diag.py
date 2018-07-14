@@ -11,9 +11,6 @@ class SSVI_Embedding_Diag(SSVI_interface):
         self.variational_posterior = PosteriorDiagonalCovariance([self.num_words], D)
         self.cov_eta = 0.01
 
-    def init_di_Di(self):
-        return np.ones((self.D,)), np.ones((self.D,))
-
     def update_mean_param(self, word_id, m, S, di_acc):
         meanGrad = (np.multiply(self.pSigma_inv, self.pmu - m) + di_acc)
         meanStep = self.compute_stepsize_mean_param(word_id, meanGrad)
