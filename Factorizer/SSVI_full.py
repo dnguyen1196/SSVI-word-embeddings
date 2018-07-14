@@ -50,7 +50,73 @@ class SSVI_Embedding_full(SSVI_interface):
 
             d_acc = np.multiply(d_acc, m)
             D_acc = np.multiply(D_acc, S + np.outer(m, m))
+            # TODO: this should be S + np.multiply(m, m)
 
-        Di = -1./s * D_acc
         di = y/s * d_acc - 1./s * np.inner(D_acc, mi)
+        Di = -1./s * D_acc
+
         return di, Di
+
+    def estimate_di_Di_batch(self, id, mi, Si, ys, entries):
+        """
+
+        :param id:
+        :param mi:
+        :param Si:
+        :param ys:    (num_samples, )
+        :param entries: (num_samples, tensor_order)
+        :return:
+        """
+        num_samples    = np.size(ys, axis=0)
+        other_word_ids = [entry[1:] for entry in entries]
+        di_sum  = np.zeros((self.D,))
+        Di_sum  = np.zeros((self.D, self.D))
+        s = self.sigma
+
+        for i in range(num_samples):
+            # dij, Dij     = self.estimate_di_Di_entry(other_word_ids[i])
+            # di_sum      += ys[i]/s * dij - 1./s * np.inner(Dij, mi)
+            # Di_sum      += -1./s  * Dij
+            dij, Dij       = self.estimate_di_Di_add(other_word_ids[i], ys[i], s, mi)
+            di_sum        += dij
+            Di_sum        += Dij
+
+        return di_sum, Di_sum
+
+    def estimate_di_Di_entry(self, word_ids):
+        """
+
+        :param word_ids:
+        :return:
+        """
+        d_acc = np.ones((self.D,))
+        D_acc = np.ones((self.D,self.D))
+
+        for word_id in word_ids:
+            m, S = self.variational_posterior.get_vector_distribution(self.ndim, word_id)
+
+            d_acc = np.multiply(d_acc, m)
+            D_acc = np.multiply(D_acc, S + np.outer(m, m))
+
+        return d_acc, D_acc
+
+    def estimate_di_Di_add(self, word_ids, y, s, mi):
+        d_ijk = np.copy(mi)
+        ms    = np.ones((self.D,))
+        D_ijk = np.ones((self.D,self.D))
+
+        for word_id in word_ids:
+            m, S = self.variational_posterior.get_vector_distribution(self.ndim, word_id)
+
+            # d_ijk.shape == (self.D,)
+            # 1/s (S + mm^T)(S + mm^T) mi + (m . m) yij
+            d_ijk = np.dot(S, d_ijk) + np.multiply(m, np.dot(m, d_ijk))
+            ms    = np.multiply(ms, m)
+
+            # Dijk.shape == (self.D,)
+            D_ijk = np.multiply(D_ijk, S + np.outer(m, m))
+
+        d_ijk = 1/s * (np.multiply(ms, y) - d_ijk)
+        D_ijk = -1/s * D_ijk
+
+        return d_ijk, D_ijk

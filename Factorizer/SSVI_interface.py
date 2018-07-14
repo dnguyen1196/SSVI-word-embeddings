@@ -35,12 +35,16 @@ class SSVI_interface(object):
                 observed_i = self.pmi_tensor.get_cooccurrence_list(word_id, self.batch_size)
                 m, S = self.variational_posterior.get_vector_distribution(self.ndim, word_id)
 
-                di_acc, Di_acc = self.init_di_Di()
+                # di_acc, Di_acc = self.init_di_Di()
+                #
+                # for entry in observed_i:
+                #     di, Di = self.estimate_di_Di(word_id, m, S, entry)
+                #     di_acc += di
+                #     Di_acc += Di
+                ys = [entry[1] for entry in observed_i]
+                coords = [entry[0] for entry in observed_i]
 
-                for entry in observed_i:
-                    di, Di = self.estimate_di_Di(word_id, m, S, entry)
-                    di_acc += di
-                    Di_acc += Di
+                di_acc, Di_acc = self.estimate_di_Di_batch(word_id, m, S, ys, coords)
 
                 Di_acc *= len(observed_i) / min(self.batch_size, len(observed_i))
                 di_acc *= len(observed_i) / min(self.batch_size, len(observed_i))
@@ -79,6 +83,10 @@ class SSVI_interface(object):
     def estimate_di_Di(self, id, mi, Si, entry):
         raise NotImplementedError
 
+    @abstractmethod
+    def estimate_di_Di_batch(self, id, mi, Si, ys, entries):
+        raise NotImplementedError
+
     def compute_stepsize_mean_param(self, id, mGrad):
         """
         :param id: dimension of the hidden matrix
@@ -103,6 +111,7 @@ class SSVI_interface(object):
             delta_c = np.linalg.norm(S_next - S)
         else:
             delta_c = np.linalg.norm(S_next - S, "fro")
+
         self.norm_changes[id, :] = np.array([delta_m_nat, delta_m, delta_c])
 
     def check_stopping_condition(self):
