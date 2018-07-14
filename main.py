@@ -16,6 +16,7 @@ def do_synthetic_embeddings(num_words, order, output, diag, D):
         factorizer = SSVI_Embedding_Diag(pmi_tensor, D)
     else:
         factorizer = SSVI_Embedding_full(pmi_tensor, D)
+
     factorizer.produce_embeddings(output)
 
 def do_embeddings_pmi(pickedfile, output, diag, D):
