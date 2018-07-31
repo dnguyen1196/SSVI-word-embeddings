@@ -24,7 +24,7 @@ class SSVI_interface(object):
         self.time_step         = 1
 
         self.norm_changes      = np.zeros((self.num_words, 3))
-        self.epsilon           = 0.01
+        self.epsilon           = 0.00001
 
     def produce_embeddings(self, filename=None, report=1, num_epochs = 500):
         self.report = report
@@ -33,6 +33,10 @@ class SSVI_interface(object):
         for epoch in range(num_epochs):
             for word_id in range(self.num_words):
                 observed_i = self.pmi_tensor.get_cooccurrence_list(word_id, self.batch_size)
+
+                if observed_i is None: # If no available observations associated with the word_id
+                    continue
+
                 m, S = self.variational_posterior.get_vector_distribution(self.ndim, word_id)
 
                 ys = [entry[1] for entry in observed_i]
