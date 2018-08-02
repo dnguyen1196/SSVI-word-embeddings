@@ -101,7 +101,7 @@ class PMI_matrix():
 
             #return positive_samples
 
-        # TODO: generate negative samples
+        # TODO: generate negative samples and generalize to higher dimension
         negative_sample_idx = np.random.choice(self.num_words, num_negatives, replace=False)
         negative_samples    = []
 
@@ -109,13 +109,16 @@ class PMI_matrix():
 
         # TODO: make this more general for 3d counts
         for negative_idx in negative_sample_idx:
-            coord = [idx] + [negative_idx]
+            coord = [negative_idx]
+            #print(s.insert(dim, idx))
+            coord.insert(dim, idx)
             if tuple(coord) in positive_idx:
                 continue
-
+    
             negative_samples.append((coord, 0.0))
-
-        return positive_samples + negative_samples
+        
+        samples = np.concatenate((positive_samples, negative_samples), axis=0)
+        return samples
 
 
     def generate_unique_coords(self, num_observed, num_word):

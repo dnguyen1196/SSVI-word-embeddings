@@ -11,7 +11,8 @@ class WC_factorizer_interface(object):
         self.pmi_tensor = pmi_tensor
 
         self.sigma = 1
-        self.batch_size        = 1000
+        self.batch_size        = 1024
+        self.negative_num      = 1024
         self.ndim              = 2 # change this to 2
         self.pSigma_inv        = np.ones((self.D,))
         self.pmu               = np.ones((self.D,))
@@ -32,7 +33,11 @@ class WC_factorizer_interface(object):
         for epoch in range(num_epochs):
             for col in range(self.num_words):
                 for dim in range(self.ndim):
-                    observations = self.pmi_tensor.get_cooccurrence_list(dim, col, self.batch_size)
+                    # include both negative and positive examples
+                    observations = self.pmi_tensor.get_cooccurrence_list(dim, col, self.batch_size, self.negative_num)
+
+                    if len(observations) == 0:
+                        continue
 
                     # get vector distribution for the word/context vector
                     m, S         = self.variational_posterior.get_vector_distribution(dim, col)
