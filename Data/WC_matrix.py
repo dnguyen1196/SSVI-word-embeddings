@@ -83,19 +83,40 @@ class PMI_matrix():
             for dim, id in enumerate(coord):
                 self.observations[dim][id].append((coord, pmi))
 
-    def get_cooccurrence_list(self, dim, idx, subsampling=None):
+    def get_cooccurrence_list(self, dim, idx, subsampling=None, num_negatives=512):
         """
         :param idx:
         :return: The list of entries associated with the word vector[id]
         """
         if subsampling is None:
-            return self.observations[dim][idx]
+            positive_samples = self.observations[dim][idx]
+
+            #return positive_samples
         else:
             sample_size = min(subsampling, len(self.observations[dim][idx]))
             if sample_size == 0:
                 return []
             subsamples = np.random.choice(len(self.observations[dim][idx]), sample_size, replace=False)
-            return np.take(self.observations[dim][idx], subsamples, axis=0)
+            positive_samples = np.take(self.observations[dim][idx], subsamples, axis=0)
+
+            #return positive_samples
+
+        # TODO: generate negative samples
+        negative_sample_idx = np.random.choice(self.num_words, num_negatives, replace=False)
+        negative_samples    = []
+
+        positive_idx     = {tuple(k[0]) for k in positive_samples}
+
+        # TODO: make this more general for 3d counts
+        for negative_idx in negative_sample_idx:
+            coord = [idx] + [negative_idx]
+            if tuple(coord) in positive_idx:
+                continue
+
+            negative_samples.append((coord, 0.0))
+
+        return positive_samples + negative_samples
+
 
     def generate_unique_coords(self, num_observed, num_word):
         total = np.power(num_word, self.order)
