@@ -22,10 +22,10 @@ class PMI_matrix():
             header = f.readline().rstrip()
             self.num_words = int(header)
             self.observations = [[[] for _ in range(self.num_words)] for _ in range(self.order)]
-
+            
             for line in f:
                 data = line.rstrip().split(",")
-
+                #print(line)
                 idx  = [int(x) for x in data[:-1]]
                 pmi  = float(data[-1])
 
@@ -85,6 +85,8 @@ class PMI_matrix():
             return self.observations[dim][idx]
         else:
             sample_size = min(subsampling, len(self.observations[dim][idx]))
+            if sample_size == 0:
+                return []
             subsamples = np.random.choice(len(self.observations[dim][idx]), sample_size, replace=False)
             return np.take(self.observations[dim][idx], subsamples, axis=0)
 
