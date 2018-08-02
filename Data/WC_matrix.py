@@ -1,12 +1,12 @@
 import numpy as np
 import time
-
+import itertools
 
 class PMI_matrix():
     def __init__(self):
         self.order = 2
 
-    def read_from_csv_pmi(self, filename):
+    def read_from_csv_pmi(self, filename, repeat=False):
         """
         :param filename: filename containing the pmi_tensor pair
         It must be the case that the file arranges the word
@@ -22,15 +22,21 @@ class PMI_matrix():
             header = f.readline().rstrip()
             self.num_words = int(header)
             self.observations = [[[] for _ in range(self.num_words)] for _ in range(self.order)]
-
+            print(self.observations)
             for line in f:
                 data = line.rstrip().split(",")
 
                 idx  = [int(x) for x in data[:-1]]
                 pmi  = float(data[-1])
 
-                for dim, col in enumerate(idx):
-                    self.observations[dim][col].append((idx, pmi))
+                if repeat:
+                    set_perms = [idx]
+                else:
+                    set_perms = itertools.permutations(idx)
+
+                for perm in set_perms:
+                    for dim, col in enumerate(perm):
+                        self.observations[dim][col].append((idx, pmi))
 
     def synthesize_PPMI_matrix(self, num_words, D=50, sparsity=0.1):
         self.num_words = num_words
