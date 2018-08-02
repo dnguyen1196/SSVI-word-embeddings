@@ -12,7 +12,8 @@ class SSVI_interface(object):
         self.pmi_tensor = pmi_tensor
 
         self.sigma = 1
-        self.batch_size        = 1000
+        self.batch_size        = 1024
+        self.negative_nums     = 1024
         self.ndim              = 0
         self.pSigma_inv        = np.ones((self.D,))
         self.pmu               = np.ones((self.D,))
@@ -32,7 +33,7 @@ class SSVI_interface(object):
 
         for epoch in range(num_epochs):
             for word_id in range(self.num_words):
-                observed_i = self.pmi_tensor.get_cooccurrence_list(word_id, self.batch_size)
+                observed_i = self.pmi_tensor.get_cooccurrence_list(word_id, self.batch_size, self.negative_nums)
                 m, S = self.variational_posterior.get_vector_distribution(self.ndim, word_id)
 
                 ys = [entry[1] for entry in observed_i]
