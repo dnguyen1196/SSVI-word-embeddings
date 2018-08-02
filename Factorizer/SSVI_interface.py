@@ -34,8 +34,8 @@ class SSVI_interface(object):
             for word_id in range(self.num_words):
                 observed_i = self.pmi_tensor.get_cooccurrence_list(word_id, self.batch_size)
 
-                if observed_i is None: # If no available observations associated with the word_id
-                    continue
+                #if observed_i is None: # If no available observations associated with the word_id
+                #    continue
 
                 m, S = self.variational_posterior.get_vector_distribution(self.ndim, word_id)
 
