@@ -48,7 +48,7 @@ class SSVI_interface(object):
                 m_next = self.update_mean_param(word_id, m, S, di_acc)
 
                 self.keep_track_changes(word_id, m, S, m_next, S_next)
-                self.variational_posterior.update_vector_distribution(self.ndim, word_id, m_next, S_next)
+                self.variational_posterior.update_vector_distribution(dim, word_id, m_next, S_next)
 
             self.time_step += 1
             delta_m_nat, delta_m, delta_c = self.check_stopping_condition()
