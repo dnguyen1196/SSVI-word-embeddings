@@ -43,32 +43,41 @@ class SSVI_WC_factorizer_diag(WC_factorizer_interface):
 
         di_sum  = np.zeros((self.D,))
         Di_sum  = np.zeros((self.D,))
-        s = self.sigma
+        s       = self.sigma
+        
+        m_sets, s_sets = self.get_distribution_params(otherdims, othercols)
+        # m_sets.shape == (num_samples, num_other_cols, D)
+        # s_sets       == (num_samples, num_other_cols, D)
 
         for i in range(num_samples):
-            dij, Dij       = self.estimate_di_Di_add(otherdims, othercols[i, :], ys[i], s, mi)
+            dij, Dij       = self.estimate_di_Di_add(m_sets[i, :, :], s_sets[i, :, :], ys[i], s, mi)
             di_sum        += dij
             Di_sum        += Dij
 
         return di_sum, Di_sum
 
-    def estimate_di_Di_add(self, dims, cols, y, s, mi):
+    def estimate_di_Di_add(self, m_params, s_params, y, s, mi):
         """
 
-        :param word_id:
-        :param y:
-        :param s:
-        :param mi:
+        :param m_params: shape = (other_dims, D)
+        :param s_params: shape = (other_dims, D)
+        :param y:        shape = (1)
+        :param s:        shape = (1)
+        :param mi:       
         :return:
         """
         d_ijk = np.copy(mi)
         ms    = np.ones((self.D,))
         D_ijk = np.ones((self.D,))
+        num_params = np.size(m_params, axis=0)
 
-        for i, col in enumerate(cols):
-            dim  = dims[i]
-            m, S = self.variational_posterior.get_vector_distribution(dim, col)
+        # Loop through each dimension 
+        # TODO: make sure this is general enough to work for 3D tensors
+        for i in range(num_params):
 
+            #m, S = self.variational_posterior.get_vector_distribution(dim, col)
+            m     = m_params[i, :]
+            S     = s_params[i, :]
             # d_ijk.shape == (self.D,)
             # 1/s (S + mm^T)(S + mm^T) mi + (m . m) yij
             d_ijk = np.multiply(S, d_ijk) + np.multiply(m, np.multiply(m, d_ijk))
@@ -81,3 +90,20 @@ class SSVI_WC_factorizer_diag(WC_factorizer_interface):
         D_ijk = -1/s * D_ijk
 
         return d_ijk, D_ijk
+
+    def get_distribution_params(self, dims, set_cols):
+        num_samples = np.size(set_cols, axis=0)
+        num_dims    = np.size(set_cols, axis=1)
+        m_set       = np.zeros((num_samples, num_dims, self.D))
+        S_set       = np.zeros((num_samples, num_dims, self.D))
+        
+        for i in range(num_samples):
+            cols = set_cols[i, :] # Get the set of columns to get distribution from
+            for k, col in enumerate(cols):
+                dim = dims[k]
+                m, S = self.variational_posterior.get_vector_distribution(dim, col)
+
+                m_set[i, k, :] = m
+                S_set[i, k, :] = S
+        
+        return m_set, S_set 
